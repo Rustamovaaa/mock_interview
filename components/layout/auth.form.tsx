@@ -20,8 +20,6 @@ import {signIn, signUp} from "@/lib/actions/auth.actions";
 import FormField from "@/components/customs/form.field";
 
 
-
-
 const authFormSchema = (type: FormType) => {
     return z.object({
         name: type === "sign-up" ? z.string().min(3) : z.string().optional(),
@@ -98,7 +96,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
     };
 
     const isSignIn = type === "sign-in";
-
     return (
         <div className="card-border lg:min-w-[566px]">
             <div className="flex flex-col gap-6 card py-14 px-10">
@@ -157,7 +154,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 </p>
             </div>
         </div>
-    );
-};
-
-export default AuthForm;
+    )
+}
+export default AuthForm

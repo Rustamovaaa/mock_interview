@@ -1,13 +1,12 @@
-import React from 'react';
+import { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import {isAuthenticated} from "@/lib/actions/auth.actions";
 
-interface AuthLayoutProps {
-    children: React.ReactNode;
-}
+const AuthLayout = async ({ children }: { children: ReactNode }) => {
+    const isUserAuthenticated = await isAuthenticated();
+    if (isUserAuthenticated) redirect("/");
 
-export default function AuthLayout({ children }: AuthLayoutProps) {
-    return (
-        <div className="auth-layout">
-            {children}
-        </div>
-    );
-}
+    return <div className="auth-layout">{children}</div>;
+};
+
+export default AuthLayout;

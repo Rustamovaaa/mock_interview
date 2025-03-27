@@ -1,13 +1,12 @@
+import React, {ReactNode} from 'react'
 import Link from "next/link";
 import Image from "next/image";
-import { ReactNode } from "react";
-import { redirect } from "next/navigation";
+import {redirect} from "next/navigation";
 import {isAuthenticated} from "@/lib/actions/auth.actions";
 
-
-const Layout = async ({ children }: { children: ReactNode }) => {
+const Layout = async ({children}: { children: ReactNode }) => {
     const isUserAuthenticated = await isAuthenticated();
-    if (isUserAuthenticated) redirect("/");
+    if (!isUserAuthenticated) redirect("/sign-in");
 
     return (
         <div className="root-layout">
@@ -20,7 +19,6 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 
             {children}
         </div>
-    );
-};
-
-export default Layout;
+    )
+}
+export default Layout

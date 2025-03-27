@@ -1,13 +1,21 @@
-import React from 'react'
+import {getCurrentUser} from "@/lib/actions/auth.actions";
 import Agent from "@/components/layout/agent";
 
-const InterviewPage = () => {
+
+const InterViewPage = async () => {
+    const user = await getCurrentUser();
+
     return (
         <>
-            <h3>InterviewPage</h3>
+            <h3>Interview generation</h3>
 
-            <Agent userName="You" userId="user1" type="generate" />
+            <Agent
+                userName={user?.name || "User"}
+                userId={user?.id}
+                type="generate"
+            />
         </>
-    )
-}
-export default InterviewPage
+    );
+};
+
+export default InterViewPage;
