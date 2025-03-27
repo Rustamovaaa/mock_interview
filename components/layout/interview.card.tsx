@@ -8,7 +8,7 @@ import DisplayTechIcons from "@/components/layout/display.tech.icons";
 
 const InterviewCard = async ({
                                  interviewId,
-                                 userId,
+                                 // userId,
                                  role,
                                  type,
                                  techstack,

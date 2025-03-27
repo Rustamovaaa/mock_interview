@@ -41,19 +41,16 @@ export async function signUp(params: SignUpParams) {
         await db.collection("users").doc(uid).set({
             name,
             email,
-            // profileURL,
-            // resumeURL,
         });
 
         return {
             success: true,
             message: "Account created successfully. Please sign in.",
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error creating user:", error);
 
-        // Handle Firebase specific errors
-        if (error.code === "auth/email-already-exists") {
+        if (error instanceof Error && error.message.includes("auth/email-already-exists")) {
             return {
                 success: false,
                 message: "This email is already in use",
@@ -79,8 +76,8 @@ export async function signIn(params: SignInParams) {
             };
 
         await setSessionCookie(idToken);
-    } catch (error: any) {
-        console.log("");
+    } catch (error: unknown) {
+        console.error("Sign-in error:", error);
 
         return {
             success: false,
@@ -92,7 +89,6 @@ export async function signIn(params: SignInParams) {
 // Sign out user by clearing the session cookie
 export async function signOut() {
     const cookieStore = await cookies();
-
     cookieStore.delete("session");
 }
 
@@ -107,20 +103,16 @@ export async function getCurrentUser(): Promise<User | null> {
         const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
 
         // get user info from db
-        const userRecord = await db
-            .collection("users")
-            .doc(decodedClaims.uid)
-            .get();
+        const userRecord = await db.collection("users").doc(decodedClaims.uid).get();
         if (!userRecord.exists) return null;
 
         return {
             ...userRecord.data(),
             id: userRecord.id,
         } as User;
-    } catch (error) {
-        console.log(error);
+    } catch (error: unknown) {
+        console.error("Error getting current user:", error);
 
-        // Invalid or expired session
         return null;
     }
 }
