@@ -2,17 +2,11 @@ import React from 'react'
 import Image from "next/image";
 import {cn} from "@/lib/utils";
 
-enum CallStatus{
+enum CallStatus {
     INACTIVE = "INACTIVE",
+    CONNECTING = "CONNECTING",
     ACTIVE = "ACTIVE",
     FINISHED = "FINISHED",
-    CONNECTING = "CONNECTING"
-}
-
-interface AgentProps {
-    userName: string;
-    userId: string;
-    type: string;
 }
 
 const Agent = ({userName}: AgentProps) => {
@@ -63,19 +57,27 @@ const Agent = ({userName}: AgentProps) => {
             )}
 
             <div className="w-full flex justify-center">
-                {callStatus !== CallStatus.ACTIVE ? (
-                    <button className={"relative btn-call"}>
-            <span className={cn(
-                'absolute animate-ping rounded-full opacity-75',
-                callStatus !== CallStatus.CONNECTING && 'hidden'
-            )}
+                {callStatus !== "ACTIVE" ? (
+                    <button className="relative btn-call"
+                            // onClick={() => handleCall()}
+                    >
+            <span
+                className={cn(
+                    "absolute animate-ping rounded-full opacity-75",
+                    callStatus !== "CONNECTING" && "hidden"
+                )}
             />
-                        <span>
-                {callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED ? 'Call' : '...'}
+
+                        <span className="relative">
+              {callStatus === "INACTIVE" || callStatus === "FINISHED"
+                  ? "Call"
+                  : ". . ."}
             </span>
                     </button>
                 ) : (
-                    <button className={"btn-disconnect"}>
+                    <button className="btn-disconnect"
+                            // onClick={() => handleDisconnect()}
+                    >
                         End
                     </button>
                 )}
