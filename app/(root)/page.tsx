@@ -1,36 +1,29 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { getInterviewsByUserId, getLatestInterviews } from "@/lib/actions/general.action";
+import {getInterviewsByUserId, getLatestInterviews} from "@/lib/actions/general.action";
 import InterviewCard from "@/components/layout/interview.card";
-import { getCurrentUser } from "@/lib/actions/auth.actions";
+import {getCurrentUser} from "@/lib/actions/auth.actions";
 
-async function Home() {
+async function Home () {
     const user = await getCurrentUser();
-    const userId = user?.id;
 
-    let userInterviews: Interview[] = [];
-    let allInterviews: Interview[] = [];
+    const [userInterviews, allInterview] = await Promise.all([
+        getInterviewsByUserId(user?.id!),
+        getLatestInterviews({ userId: user?.id! }),
+    ]);
 
-    if (userId) {
-        const [userRes, allRes] = await Promise.all([
-            getInterviewsByUserId(userId),
-            getLatestInterviews({ userId }),
-        ]);
-
-        userInterviews = userRes ?? []; // Agar `null` bo‘lsa, bo‘sh massivga almashtiramiz
-        allInterviews = allRes ?? []; // Agar `null` bo‘lsa, bo‘sh massivga almashtiramiz
-    }
-
-    const hasPastInterviews = userInterviews.length > 0;
-    const hasUpcomingInterviews = allInterviews.length > 0;
+    const hasPastInterviews = userInterviews?.length! > 0;
+    const hasUpcomingInterviews = allInterview?.length! > 0;
 
     return (
         <>
             <section className="card-cta">
                 <div className="flex flex-col gap-6 max-w-lg">
                     <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
-                    <p className="text-lg">Practice real interview questions & get instant feedback</p>
+                    <p className="text-lg">
+                        Practice real interview questions & get instant feedback
+                    </p>
 
                     <Button asChild className="btn-primary max-sm:w-full">
                         <Link href="/interview">Start an Interview</Link>
@@ -42,7 +35,6 @@ async function Home() {
                     alt="robo-dude"
                     width={400}
                     height={400}
-                    priority
                     className="max-sm:hidden"
                 />
             </section>
@@ -52,10 +44,10 @@ async function Home() {
 
                 <div className="interviews-section">
                     {hasPastInterviews ? (
-                        userInterviews.map((interview) => (
+                        userInterviews?.map((interview) => (
                             <InterviewCard
                                 key={interview.id}
-                                userId={userId}
+                                userId={user?.id}
                                 interviewId={interview.id}
                                 role={interview.role}
                                 type={interview.type}
@@ -74,10 +66,10 @@ async function Home() {
 
                 <div className="interviews-section">
                     {hasUpcomingInterviews ? (
-                        allInterviews.map((interview) => (
+                        allInterview?.map((interview) => (
                             <InterviewCard
                                 key={interview.id}
-                                userId={userId}
+                                userId={user?.id}
                                 interviewId={interview.id}
                                 role={interview.role}
                                 type={interview.type}
@@ -94,4 +86,4 @@ async function Home() {
     );
 }
 
-export default Home;
+export default Home
